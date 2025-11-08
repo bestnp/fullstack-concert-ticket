@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useMemo, useState } from 'react';
 import type { ReactNode } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 
@@ -9,7 +9,6 @@ import {
   InboxIcon,
   LogOutIcon,
   RefreshCcwIcon,
-  SaveIcon,
 } from '@/icons';
 import type { IconProps } from '@/icons';
 
@@ -46,6 +45,7 @@ export function Sidebar({ initialRole = 'admin' }: SidebarProps) {
   const router = useRouter();
   const pathname = usePathname();
   const [role, setRole] = useState<Role>(initialRole);
+
   const determineKey = (currentRole: Role, path: string) => {
     const navList = NAVIGATION[currentRole];
     let bestMatch: NavItem | undefined;
@@ -75,16 +75,10 @@ export function Sidebar({ initialRole = 'admin' }: SidebarProps) {
     return bestMatch?.key ?? navList[0]?.key ?? '';
   };
 
-  const [activeKey, setActiveKey] = useState<string>(() => determineKey(initialRole, pathname));
-
   const navItems = NAVIGATION[role];
-
-  useEffect(() => {
-    setActiveKey(determineKey(role, pathname));
-  }, [pathname, role]);
+  const activeKey = useMemo(() => determineKey(role, pathname), [role, pathname]);
 
   const handleNavClick = (item: NavItem) => {
-    setActiveKey(item.key);
     if (item.href) {
       router.push(item.href);
     }
@@ -93,7 +87,6 @@ export function Sidebar({ initialRole = 'admin' }: SidebarProps) {
   const handleSwitchRole = () => {
     setRole((prev) => {
       const nextRole = prev === 'admin' ? 'user' : 'admin';
-      setActiveKey(NAVIGATION[nextRole][0]?.key ?? '');
       return nextRole;
     });
     const nextRoute = role === 'admin' ? '/user' : '/';

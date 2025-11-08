@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 
 import { CancelReservationDto } from './dto/cancel-reservation.dto';
 import { ReserveConcertDto } from './dto/reserve-concert.dto';
@@ -27,4 +27,3 @@ export class ReservationsController {
     return this.reservationsService.historyAll();
   }
 }
-

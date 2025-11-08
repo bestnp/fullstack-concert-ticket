@@ -27,9 +27,9 @@ export default function UserPage() {
   const [loadingConcerts, setLoadingConcerts] = useState(false);
   const [processingId, setProcessingId] = useState<string | null>(null);
 
-  const showToast = (message: string, variant: ToastVariant = 'success') => {
+  const showToast = useCallback((message: string, variant: ToastVariant = 'success') => {
     setToast({ message, variant });
-  };
+  }, []);
 
   const handleCloseToast = () => {
     setToast(null);
@@ -75,7 +75,7 @@ export default function UserPage() {
     };
 
     void bootstrap();
-  }, [loadConcerts]);
+  }, [loadConcerts, showToast]);
 
   const handleReserve = async (concertId: string) => {
     if (!user) return;

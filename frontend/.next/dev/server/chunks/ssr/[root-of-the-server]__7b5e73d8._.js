@@ -28,17 +28,23 @@ __turbopack_context__.s([
     "reserveConcert",
     ()=>reserveConcert
 ]);
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:3001';
+const API_BASE_URL = ("TURBOPACK compile-time value", "http://localhost:4000") ?? 'http://localhost:4000';
 async function request(path, options = {}) {
     const { json, headers, ...rest } = options;
-    const response = await fetch(`${API_BASE_URL}${path}`, {
-        ...rest,
-        headers: {
-            'Content-Type': 'application/json',
-            ...headers ?? {}
-        },
-        body: json !== undefined ? JSON.stringify(json) : rest.body
-    });
+    const frontendOrigin = ("TURBOPACK compile-time falsy", 0) ? "TURBOPACK unreachable" : 'the frontend origin';
+    let response;
+    try {
+        response = await fetch(`${API_BASE_URL}${path}`, {
+            ...rest,
+            headers: {
+                'Content-Type': 'application/json',
+                ...headers ?? {}
+            },
+            body: json !== undefined ? JSON.stringify(json) : rest.body
+        });
+    } catch (error) {
+        throw new Error(`Failed to reach backend at ${API_BASE_URL}. Ensure the NestJS server is running and CORS allows ${frontendOrigin}.`);
+    }
     if (!response.ok) {
         let message = response.statusText;
         try {
@@ -1349,16 +1355,12 @@ function Sidebar({ initialRole = 'admin' }) {
         });
         return bestMatch?.key ?? navList[0]?.key ?? '';
     };
-    const [activeKey, setActiveKey] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(()=>determineKey(initialRole, pathname));
     const navItems = NAVIGATION[role];
-    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
-        setActiveKey(determineKey(role, pathname));
-    }, [
-        pathname,
-        role
+    const activeKey = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useMemo"])(()=>determineKey(role, pathname), [
+        role,
+        pathname
     ]);
     const handleNavClick = (item)=>{
-        setActiveKey(item.key);
         if (item.href) {
             router.push(item.href);
         }
@@ -1366,7 +1368,6 @@ function Sidebar({ initialRole = 'admin' }) {
     const handleSwitchRole = ()=>{
         setRole((prev)=>{
             const nextRole = prev === 'admin' ? 'user' : 'admin';
-            setActiveKey(NAVIGATION[nextRole][0]?.key ?? '');
             return nextRole;
         });
         const nextRoute = role === 'admin' ? '/user' : '/';
@@ -1386,12 +1387,12 @@ function Sidebar({ initialRole = 'admin' }) {
                             children: currentRoleTitle
                         }, void 0, false, {
                             fileName: "[project]/src/components/Sidebar.tsx",
-                            lineNumber: 110,
+                            lineNumber: 103,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/components/Sidebar.tsx",
-                        lineNumber: 109,
+                        lineNumber: 102,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("nav", {
@@ -1411,20 +1412,20 @@ function Sidebar({ initialRole = 'admin' }) {
                                             className: "shrink-0"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/Sidebar.tsx",
-                                            lineNumber: 128,
+                                            lineNumber: 121,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                             children: item.label
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/Sidebar.tsx",
-                                            lineNumber: 133,
+                                            lineNumber: 126,
                                             columnNumber: 17
                                         }, this)
                                     ]
                                 }, item.key, true, {
                                     fileName: "[project]/src/components/Sidebar.tsx",
-                                    lineNumber: 118,
+                                    lineNumber: 111,
                                     columnNumber: 15
                                 }, this);
                             }),
@@ -1438,32 +1439,32 @@ function Sidebar({ initialRole = 'admin' }) {
                                         className: "shrink-0"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/Sidebar.tsx",
-                                        lineNumber: 143,
+                                        lineNumber: 136,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                         children: switchLabel
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/Sidebar.tsx",
-                                        lineNumber: 144,
+                                        lineNumber: 137,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/Sidebar.tsx",
-                                lineNumber: 138,
+                                lineNumber: 131,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/Sidebar.tsx",
-                        lineNumber: 113,
+                        lineNumber: 106,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/Sidebar.tsx",
-                lineNumber: 108,
+                lineNumber: 101,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1477,31 +1478,31 @@ function Sidebar({ initialRole = 'admin' }) {
                             className: "shrink-0"
                         }, void 0, false, {
                             fileName: "[project]/src/components/Sidebar.tsx",
-                            lineNumber: 154,
+                            lineNumber: 147,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                             children: "Logout"
                         }, void 0, false, {
                             fileName: "[project]/src/components/Sidebar.tsx",
-                            lineNumber: 155,
+                            lineNumber: 148,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/components/Sidebar.tsx",
-                    lineNumber: 150,
+                    lineNumber: 143,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/src/components/Sidebar.tsx",
-                lineNumber: 149,
+                lineNumber: 142,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/src/components/Sidebar.tsx",
-        lineNumber: 107,
+        lineNumber: 100,
         columnNumber: 5
     }, this);
 }
@@ -1703,12 +1704,12 @@ function Dashboard() {
         totalSeats: '',
         description: ''
     });
-    const showToast = (message, variant = 'success')=>{
+    const showToast = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useCallback"])((message, variant = 'success')=>{
         setToast({
             message,
             variant
         });
-    };
+    }, []);
     const handleCloseToast = ()=>{
         setToast(null);
     };
@@ -1736,7 +1737,9 @@ function Dashboard() {
         } finally{
             setLoadingConcerts(false);
         }
-    }, []);
+    }, [
+        showToast
+    ]);
     const loadHistory = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useCallback"])(async ()=>{
         setLoadingHistory(true);
         try {
@@ -1748,7 +1751,9 @@ function Dashboard() {
         } finally{
             setLoadingHistory(false);
         }
-    }, []);
+    }, [
+        showToast
+    ]);
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
         void loadConcerts();
         void loadHistory();

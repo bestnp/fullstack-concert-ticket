@@ -38,9 +38,9 @@ export function Dashboard() {
     description: '',
   });
 
-  const showToast = (message: string, variant: ToastVariant = 'success') => {
+  const showToast = useCallback((message: string, variant: ToastVariant = 'success') => {
     setToast({ message, variant });
-  };
+  }, []);
 
   const handleCloseToast = () => {
     setToast(null);
@@ -70,7 +70,7 @@ export function Dashboard() {
     } finally {
       setLoadingConcerts(false);
     }
-  }, []);
+  }, [showToast]);
 
   const loadHistory = useCallback(async () => {
     setLoadingHistory(true);
@@ -83,7 +83,7 @@ export function Dashboard() {
     } finally {
       setLoadingHistory(false);
     }
-  }, []);
+  }, [showToast]);
 
   useEffect(() => {
     void loadConcerts();
