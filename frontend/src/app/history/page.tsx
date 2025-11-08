@@ -1,37 +1,46 @@
-'use client';
+"use client";
 
-import { Sidebar } from '@/components';
+import { useEffect, useState } from 'react';
 
-type HistoryItem = {
-  id: string;
-  dateTime: string;
-  username: string;
-  concertName: string;
-  action: string;
-};
-
-const HISTORY: HistoryItem[] = [
-  {
-    id: 'history-1',
-    dateTime: '12/09/2024 15:00:00',
-    username: 'Sara John',
-    concertName: 'The festival Int 2024',
-    action: 'Cancel',
-  },
-  {
-    id: 'history-2',
-    dateTime: '12/09/2024 10:39:20',
-    username: 'Sara John',
-    concertName: 'The festival Int 2024',
-    action: 'Reserve',
-  },
-];
+import { Sidebar, Toast, type ToastVariant } from '@/components';
+import { getReservationHistory, type ReservationHistoryEntry } from '@/lib/api';
 
 export default function HistoryPage() {
+  const [history, setHistory] = useState<ReservationHistoryEntry[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [toast, setToast] = useState<{ message: string; variant: ToastVariant } | null>(null);
+
+  useEffect(() => {
+    const fetchHistory = async () => {
+      setLoading(true);
+      try {
+        const data = await getReservationHistory();
+        setHistory(data);
+      } catch (error) {
+        console.error(error);
+        setToast({
+          message: error instanceof Error ? error.message : 'Failed to load reservation history',
+          variant: 'error',
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    void fetchHistory();
+  }, []);
+
   return (
     <div className="min-h-screen bg-gray-50 pl-[240px]">
       <Sidebar />
       <main className="flex min-h-screen flex-col px-10 py-10">
+        <Toast
+          open={Boolean(toast)}
+          message={toast?.message ?? ''}
+          variant={toast?.variant ?? 'success'}
+          onClose={() => setToast(null)}
+        />
+
         <section className="mx-auto w-full max-w-5xl">
           <div className="overflow-hidden rounded-2xl border border-[#D0D5DD] bg-white shadow-sm">
             <table className="min-w-full border-collapse text-left text-sm text-[#101828]">
@@ -44,14 +53,36 @@ export default function HistoryPage() {
                 </tr>
               </thead>
               <tbody>
-                {HISTORY.map((item) => (
-                  <tr key={item.id} className="text-sm text-[#101828]">
-                    <td className="border-b border-r border-[#D0D5DD] px-4 py-3">{item.dateTime}</td>
-                    <td className="border-b border-r border-[#D0D5DD] px-4 py-3">{item.username}</td>
-                    <td className="border-b border-r border-[#D0D5DD] px-4 py-3">{item.concertName}</td>
-                    <td className="border-b border-[#D0D5DD] px-4 py-3">{item.action}</td>
+                {loading ? (
+                  <tr>
+                    <td className="px-4 py-3" colSpan={4}>
+                      Loading history...
+                    </td>
                   </tr>
-                ))}
+                ) : history.length === 0 ? (
+                  <tr>
+                    <td className="px-4 py-3 text-[#667085]" colSpan={4}>
+                      No reservation history yet.
+                    </td>
+                  </tr>
+                ) : (
+                  history.map((entry) => (
+                    <tr key={entry.id} className="text-sm text-[#101828]">
+                      <td className="border-b border-r border-[#D0D5DD] px-4 py-3">
+                        {new Date(entry.occurredAt).toLocaleString()}
+                      </td>
+                      <td className="border-b border-r border-[#D0D5DD] px-4 py-3">
+                        {entry.user?.fullName ?? entry.userId}
+                      </td>
+                      <td className="border-b border-r border-[#D0D5DD] px-4 py-3">
+                        {entry.concert?.name ?? entry.concertId}
+                      </td>
+                      <td className="border-b border-[#D0D5DD] px-4 py-3 text-[#1275D1]">
+                        {entry.action === 'RESERVE' ? 'Reserve' : 'Cancel'}
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
