@@ -1,7 +1,15 @@
 "use client";
 
-import { useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
+import {
+  createConcert,
+  deleteConcert as apiDeleteConcert,
+  getConcerts,
+  getReservationHistory,
+  type ConcertResponse,
+  type ReservationHistoryEntry,
+} from '@/lib/api';
 import { AwardIcon, SaveIcon, UserIcon, XCircleLightIcon } from '@/icons';
 
 import { Button } from './Button';
@@ -12,34 +20,18 @@ import { Toast, type ToastVariant } from './Toast';
 
 type TabKey = 'overview' | 'create';
 
-type Concert = {
-  id: string;
-  name: string;
-  description: string;
-  totalSeats: number;
-};
-
-const INITIAL_CONCERTS: Concert[] = [
-  {
-    id: 'concert-1',
-    name: 'Concert Name 1',
-    description:
-      'Lorem ipsum dolor sit amet consectetur. Elit purus nam gravida porttitor nibh urna sit ornare a. Proin dolor morbi id ornare aenean non. Fusce dignissim turpis sed non est orci sed in. Blandit ut purus nunc sed donec commodo morbi diam scelerisque.',
-    totalSeats: 500,
-  },
-  {
-    id: 'concert-2',
-    name: 'Concert Name 2',
-    description:
-      'Lorem ipsum dolor sit amet consectetur. Elit purus nam gravida porttitor nibh urna sit ornare a. Proin dolor morbi id ornare aenean non. Fusce dignissim turpis sed non est orci sed in. Blandit ut purus nunc sed donec commodo morbi diam scelerisque.',
-    totalSeats: 200,
-  },
-];
+type Concert = Pick<
+  ConcertResponse,
+  'id' | 'name' | 'description' | 'totalSeats' | 'reservedSeats' | 'availableSeats'
+>;
 
 export function Dashboard() {
   const [activeTab, setActiveTab] = useState<TabKey>('overview');
-  const [concerts, setConcerts] = useState<Concert[]>(INITIAL_CONCERTS);
+  const [concerts, setConcerts] = useState<Concert[]>([]);
+  const [history, setHistory] = useState<ReservationHistoryEntry[]>([]);
   const [toast, setToast] = useState<{ message: string; variant: ToastVariant } | null>(null);
+  const [loadingConcerts, setLoadingConcerts] = useState(false);
+  const [loadingHistory, setLoadingHistory] = useState(false);
   const [formValues, setFormValues] = useState({
     name: '',
     totalSeats: '',
@@ -50,11 +42,6 @@ export function Dashboard() {
     setToast({ message, variant });
   };
 
-  const handleDelete = (id: string, name: string) => {
-    setConcerts((prev) => prev.filter((concert) => concert.id !== id));
-    showToast(`Deleted ${name} successfully`);
-  };
-
   const handleCloseToast = () => {
     setToast(null);
   };
@@ -63,7 +50,59 @@ export function Dashboard() {
     setFormValues((prev) => ({ ...prev, [key]: value }));
   };
 
-  const handleCreateSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const loadConcerts = useCallback(async () => {
+    setLoadingConcerts(true);
+    try {
+      const data = await getConcerts();
+      setConcerts(
+        data.map(({ id, name, description, totalSeats, reservedSeats, availableSeats }) => ({
+          id,
+          name,
+          description,
+          totalSeats,
+          reservedSeats,
+          availableSeats,
+        })),
+      );
+    } catch (error) {
+      console.error(error);
+      showToast('Failed to load concerts', 'error');
+    } finally {
+      setLoadingConcerts(false);
+    }
+  }, []);
+
+  const loadHistory = useCallback(async () => {
+    setLoadingHistory(true);
+    try {
+      const entries = await getReservationHistory();
+      setHistory(entries);
+    } catch (error) {
+      console.error(error);
+      showToast('Failed to load reservation history', 'error');
+    } finally {
+      setLoadingHistory(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    void loadConcerts();
+    void loadHistory();
+  }, [loadConcerts, loadHistory]);
+
+  const handleDelete = async (id: string, name: string) => {
+    try {
+      await apiDeleteConcert(id);
+      setConcerts((prev) => prev.filter((concert) => concert.id !== id));
+      await loadHistory();
+      showToast(`Deleted ${name} successfully`);
+    } catch (error) {
+      console.error(error);
+      showToast('Failed to delete concert', 'error');
+    }
+  };
+
+  const handleCreateSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const trimmedName = formValues.name.trim();
     const trimmedDescription = formValues.description.trim();
@@ -76,23 +115,52 @@ export function Dashboard() {
 
     const parsedSeats = Number(seatsValue);
     const totalSeats = Number.isFinite(parsedSeats) && parsedSeats >= 0 ? Math.floor(parsedSeats) : 0;
-    const generatedId =
-      typeof crypto !== 'undefined' && 'randomUUID' in crypto
-        ? crypto.randomUUID()
-        : `concert-${Date.now()}`;
 
-    const newConcert: Concert = {
-      id: generatedId,
-      name: trimmedName,
-      description: trimmedDescription,
-      totalSeats,
-    };
+    try {
+      const created = await createConcert({
+        name: trimmedName,
+        description: trimmedDescription,
+        totalSeats,
+      });
 
-    setConcerts((prev) => [...prev, newConcert]);
-    setFormValues({ name: '', totalSeats: '', description: '' });
-    setActiveTab('overview');
-    showToast(`Created ${trimmedName} successfully`);
+      setConcerts((prev) => [
+        ...prev,
+        {
+          id: created.id,
+          name: created.name,
+          description: created.description,
+          totalSeats: created.totalSeats,
+          reservedSeats: created.reservedSeats,
+          availableSeats: created.totalSeats - created.reservedSeats,
+        },
+      ]);
+      setFormValues({ name: '', totalSeats: '', description: '' });
+      setActiveTab('overview');
+      showToast(`Created ${trimmedName} successfully`);
+    } catch (error) {
+      console.error(error);
+      showToast('Failed to create concert', 'error');
+    }
   };
+
+  const totalSeats = useMemo(
+    () => concerts.reduce((sum, concert) => sum + concert.totalSeats, 0),
+    [concerts],
+  );
+
+  const totalReserved = useMemo(
+    () =>
+      concerts.reduce(
+        (sum, concert) => sum + (concert.totalSeats - concert.availableSeats),
+        0,
+      ),
+    [concerts],
+  );
+
+  const totalCancelled = useMemo(
+    () => history.filter((entry) => entry.action === 'CANCEL').length,
+    [history],
+  );
 
   return (
     <main className="flex flex-1 flex-col gap-10 px-10 py-10">
@@ -107,21 +175,21 @@ export function Dashboard() {
         <DashboardCard
           icon={UserIcon}
           text="Total of seats"
-          number={concerts.reduce((sum, concert) => sum + concert.totalSeats, 0)}
+          number={totalSeats}
           color="#0070A4"
           size="base"
         />
         <DashboardCard
           icon={AwardIcon}
           text="Reserved"
-          number={120}
+          number={totalReserved}
           color="#00A58B"
           size="base"
         />
         <DashboardCard
           icon={XCircleLightIcon}
           text="Cancel"
-          number={12}
+          number={loadingHistory ? 0 : totalCancelled}
           color="#F96464"
           size="base"
         />
@@ -137,20 +205,25 @@ export function Dashboard() {
 
         {activeTab === 'overview' ? (
           <div className="flex flex-col gap-6">
-            {concerts.map((concert) => (
-              <ConcertCard
-                key={concert.id}
-                name={concert.name}
-                description={concert.description}
-                totalSeats={concert.totalSeats}
-                onConfirmDelete={() => handleDelete(concert.id, concert.name)}
-              />
-            ))}
-            {concerts.length === 0 ? (
+            {loadingConcerts ? (
+              <div className="rounded-2xl border border-[#D0D5DD] bg-white p-10 text-center text-[#667085]">
+                <p>Loading concerts...</p>
+              </div>
+            ) : concerts.length === 0 ? (
               <div className="rounded-2xl border border-dashed border-[#D0D5DD] bg-white p-10 text-center text-[#667085]">
                 <p>No concerts available.</p>
               </div>
-            ) : null}
+            ) : (
+              concerts.map((concert) => (
+                <ConcertCard
+                  key={concert.id}
+                  name={concert.name}
+                  description={concert.description}
+                  totalSeats={concert.totalSeats}
+                  onConfirmDelete={() => handleDelete(concert.id, concert.name)}
+                />
+              ))
+            )}
           </div>
         ) : (
           <form
@@ -173,7 +246,7 @@ export function Dashboard() {
                   placeholder="Please input concert name"
                   value={formValues.name}
                   onChange={(event) => handleFormChange('name', event.target.value)}
-              className="rounded-md border border-[#D0D5DD] px-3 py-2 text-sm text-[#101828] placeholder:text-[#C2C2C2] outline-none focus:border-[#1275D1]"
+                  className="rounded-md border border-[#D0D5DD] px-3 py-2 text-sm text-[#101828] placeholder:text-[#C2C2C2] outline-none focus:border-[#1275D1]"
                 />
               </div>
               <div className="flex flex-col gap-2">
@@ -188,7 +261,7 @@ export function Dashboard() {
                     placeholder="Please input seats"
                     value={formValues.totalSeats}
                     onChange={(event) => handleFormChange('totalSeats', event.target.value)}
-                className="w-full rounded-md border border-[#D0D5DD] px-3 py-2 pr-10 text-sm text-[#101828] placeholder:text-[#C2C2C2] outline-none focus:border-[#1275D1]"
+                    className="w-full rounded-md border border-[#D0D5DD] px-3 py-2 pr-10 text-sm text-[#101828] placeholder:text-[#C2C2C2] outline-none focus:border-[#1275D1]"
                   />
                   <UserIcon size={18} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#667085]" />
                 </div>
@@ -205,7 +278,7 @@ export function Dashboard() {
                 value={formValues.description}
                 onChange={(event) => handleFormChange('description', event.target.value)}
                 rows={4}
-            className="w-full rounded-md border border-[#D0D5DD] px-3 py-2 text-sm text-[#101828] placeholder:text-[#C2C2C2] outline-none focus:border-[#1275D1]"
+                className="w-full rounded-md border border-[#D0D5DD] px-3 py-2 text-sm text-[#101828] placeholder:text-[#C2C2C2] outline-none focus:border-[#1275D1]"
               />
             </div>
 

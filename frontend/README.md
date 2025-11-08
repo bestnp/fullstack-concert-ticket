@@ -1,5 +1,20 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Environment variables
+
+The frontend expects the NestJS backend to be running separately. Create a `.env.local` file in this directory with at least the following values:
+
+```env
+NEXT_PUBLIC_API_BASE_URL=http://localhost:3001
+NEXT_PUBLIC_DEMO_USER_EMAIL=sara.john@example.com
+NEXT_PUBLIC_DEMO_USER_NAME=Sara John
+```
+
+- `NEXT_PUBLIC_API_BASE_URL` should point to the base URL where the NestJS API is listening.
+- `NEXT_PUBLIC_DEMO_USER_EMAIL` / `NEXT_PUBLIC_DEMO_USER_NAME` are used to bootstrap a demo user when interacting with the reservation flow. Adjust or remove as needed if you introduce real authentication.
+
+Run the backend with CORS enabled for your frontend origin (see backend README). Once the backend is running you can start the frontend with `npm run dev` as usual.
+
 ## Getting Started
 
 First, run the development server:

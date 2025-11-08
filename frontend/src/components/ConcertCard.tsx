@@ -31,7 +31,7 @@ export function ConcertCard({ name, description, totalSeats, onConfirmDelete }: 
   return (
     <div className="rounded-2xl border border-[#D0D5DD] bg-white p-6 shadow-sm">
       <div className="border-b border-[#E4E7EC] pb-4">
-        <h3 className="text-2xl font-semibold text-[#1275D1]">{name}</h3>
+        <h3 className="text-2xl font-semibold text-[#1692EC]">{name}</h3>
       </div>
       <p className="mt-4 text-base leading-relaxed text-[#101828]">{description}</p>
 
