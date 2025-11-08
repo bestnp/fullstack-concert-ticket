@@ -3,13 +3,24 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+
+  /* Brand/semantic colors */
+  --color-cancel: #f96464;
+  --color-reserve: #1692ec;
+  --color-accent: #0070a4;
+  --color-success: #00a58b;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-cancel: var(--color-cancel);
+  --color-reserve: var(--color-reserve);
+  --color-accent: var(--color-accent);
+  --color-success: var(--color-success);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-roboto: var(--font-roboto);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -22,5 +33,62 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-roboto), Arial, Helvetica, sans-serif;
+}
+
+/* Utility classes for custom brand colors */
+.bg-cancel,
+.btn-cancel {
+  background-color: var(--color-cancel);
+  color: #ffffff;
+}
+
+.bg-reserve,
+.btn-reserve {
+  background-color: var(--color-reserve);
+  color: #ffffff;
+}
+
+.bg-accent,
+.btn-accent {
+  background-color: var(--color-accent);
+  color: #ffffff;
+}
+
+.bg-success,
+.btn-success {
+  background-color: var(--color-success);
+  color: #ffffff;
+}
+
+.text-cancel {
+  color: var(--color-cancel);
+}
+
+.text-reserve {
+  color: var(--color-reserve);
+}
+
+.text-accent {
+  color: var(--color-accent);
+}
+
+.text-success {
+  color: var(--color-success);
+}
+
+.border-cancel {
+  border-color: var(--color-cancel);
+}
+
+.border-reserve {
+  border-color: var(--color-reserve);
+}
+
+.border-accent {
+  border-color: var(--color-accent);
+}
+
+.border-success {
+  border-color: var(--color-success);
 }
