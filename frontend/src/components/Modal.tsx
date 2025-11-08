@@ -1,4 +1,4 @@
-import type { MouseEvent, ReactNode } from 'react';
+import type { ComponentType, MouseEvent, ReactNode } from 'react';
 
 import { Button } from '@/components';
 import type { IconProps } from '@/icons';
@@ -6,7 +6,7 @@ import type { IconProps } from '@/icons';
 type ModalAction = {
   text: string;
   onClick?: () => void;
-  icon?: (props: IconProps) => ReactNode;
+  icon?: ComponentType<IconProps>;
   variant?: 'primary' | 'danger' | 'neutral' | 'outline';
 };
 
@@ -69,7 +69,7 @@ export function Modal({
             {secondaryAction ? (
               <Button
                 text={secondaryAction.text}
-                icon={secondaryAction.icon as any}
+                icon={secondaryAction.icon}
                 variant={secondaryAction.variant ?? 'outline'}
                 className="w-full sm:w-40"
                 onClick={secondaryAction.onClick}
@@ -77,7 +77,7 @@ export function Modal({
             ) : null}
             <Button
               text={primaryAction.text}
-              icon={primaryAction.icon as any}
+              icon={primaryAction.icon}
               variant={primaryAction.variant ?? 'danger'}
               className="w-full sm:w-40"
               onClick={primaryAction.onClick}

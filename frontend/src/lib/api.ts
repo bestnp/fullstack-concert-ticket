@@ -1,5 +1,5 @@
 const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:3001';
+  process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:4000';
 
 type RequestOptions = RequestInit & {
   json?: unknown;
@@ -7,15 +7,24 @@ type RequestOptions = RequestInit & {
 
 async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
   const { json, headers, ...rest } = options;
+  const frontendOrigin =
+    typeof window !== 'undefined' ? window.location.origin : 'the frontend origin';
 
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    ...rest,
-    headers: {
-      'Content-Type': 'application/json',
-      ...(headers ?? {}),
-    },
-    body: json !== undefined ? JSON.stringify(json) : rest.body,
-  });
+  let response: Response;
+  try {
+    response = await fetch(`${API_BASE_URL}${path}`, {
+      ...rest,
+      headers: {
+        'Content-Type': 'application/json',
+        ...(headers ?? {}),
+      },
+      body: json !== undefined ? JSON.stringify(json) : rest.body,
+    });
+  } catch (error) {
+    throw new Error(
+      `Failed to reach backend at ${API_BASE_URL}. Ensure the NestJS server is running and CORS allows ${frontendOrigin}.`
+    );
+  }
 
   if (!response.ok) {
     let message = response.statusText;

@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { ReservationStatus } from '../../generated/prisma';
+import { ReservationStatus } from '@prisma/client';
 
 import { PrismaService } from '../prisma/prisma.service';
 import { CancelReservationDto } from './dto/cancel-reservation.dto';
