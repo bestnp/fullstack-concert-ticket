@@ -1170,7 +1170,7 @@ function ConcertCard({ name, description, totalSeats, onConfirmDelete }) {
                         icon: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$icons$2f$Trash2Icon$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Trash2Icon"],
                         onClick: handleDelete,
                         size: "sm",
-                        className: "sm:size-md"
+                        className: "px-3 sm:px-4"
                     }, void 0, false, {
                         fileName: "[project]/src/components/ConcertCard.tsx",
                         lineNumber: 43,
@@ -1203,7 +1203,7 @@ function ConcertCard({ name, description, totalSeats, onConfirmDelete }) {
                 }
             }, void 0, false, {
                 fileName: "[project]/src/components/ConcertCard.tsx",
-                lineNumber: 46,
+                lineNumber: 53,
                 columnNumber: 7
             }, this)
         ]
