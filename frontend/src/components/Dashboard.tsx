@@ -10,11 +10,11 @@ import {
   type ConcertResponse,
   type ReservationHistoryEntry,
 } from '@/lib/api';
-import { AwardIcon, SaveIcon, UserIcon, XCircleLightIcon } from '@/icons';
+import { AwardIcon, UserIcon, XCircleLightIcon } from '@/icons';
 
-import { Button } from './Button';
 import { ConcertCard } from './ConcertCard';
 import { DashboardCard } from './DashboardCard';
+import { CreateConcertForm, type CreateConcertFormField, type CreateConcertFormValues } from './CreateConcertForm';
 import { Tabs } from './Tabs';
 import { Toast, type ToastVariant } from './Toast';
 
@@ -32,11 +32,12 @@ export function Dashboard() {
   const [toast, setToast] = useState<{ message: string; variant: ToastVariant } | null>(null);
   const [loadingConcerts, setLoadingConcerts] = useState(false);
   const [loadingHistory, setLoadingHistory] = useState(false);
-  const [formValues, setFormValues] = useState({
+  const [formValues, setFormValues] = useState<CreateConcertFormValues>({
     name: '',
     totalSeats: '',
     description: '',
   });
+  const [creatingConcert, setCreatingConcert] = useState(false);
 
   const showToast = useCallback((message: string, variant: ToastVariant = 'success') => {
     setToast({ message, variant });
@@ -46,7 +47,7 @@ export function Dashboard() {
     setToast(null);
   };
 
-  const handleFormChange = (key: 'name' | 'totalSeats' | 'description', value: string) => {
+  const handleFormChange = (key: CreateConcertFormField, value: string) => {
     setFormValues((prev) => ({ ...prev, [key]: value }));
   };
 
@@ -116,6 +117,7 @@ export function Dashboard() {
     const parsedSeats = Number(seatsValue);
     const totalSeats = Number.isFinite(parsedSeats) && parsedSeats >= 0 ? Math.floor(parsedSeats) : 0;
 
+    setCreatingConcert(true);
     try {
       const created = await createConcert({
         name: trimmedName,
@@ -140,6 +142,8 @@ export function Dashboard() {
     } catch (error) {
       console.error(error);
       showToast('Failed to create concert', 'error');
+    } finally {
+      setCreatingConcert(false);
     }
   };
 
@@ -226,74 +230,12 @@ export function Dashboard() {
             )}
           </div>
         ) : (
-          <form
+          <CreateConcertForm
+            values={formValues}
+            onChange={handleFormChange}
             onSubmit={handleCreateSubmit}
-            className="rounded-2xl border border-[#D0D5DD] bg-white p-6 shadow-sm sm:p-10"
-          >
-            <div>
-              <h3 className="text-2xl font-semibold text-[#1692EC] sm:text-[32px] lg:text-[40px]">
-                Create
-              </h3>
-              <div className="mt-2 h-[1px] w-full max-w-[942px] rounded-full bg-[#C2C2C2]" aria-hidden />
-            </div>
-
-            <div className="mt-6 grid gap-4 sm:gap-6 md:grid-cols-2">
-              <div className="flex flex-col gap-2">
-                <label className="text-lg font-regular text-[#101828] sm:text-xl lg:text-[24px]" htmlFor="concert-name">
-                  Concert Name
-                </label>
-                <input
-                  id="concert-name"
-                  type="text"
-                  placeholder="Please input concert name"
-                  value={formValues.name}
-                  onChange={(event) => handleFormChange('name', event.target.value)}
-                  className="rounded-md border border-[#D0D5DD] px-3 py-2 text-sm text-[#101828] placeholder:text-[#C2C2C2] outline-none focus:border-[#1275D1]"
-                />
-              </div>
-              <div className="flex flex-col gap-2">
-                <label className="text-lg font-regular text-[#101828] sm:text-xl lg:text-[24px]" htmlFor="total-seats">
-                  Total of seat
-                </label>
-                <div className="relative">
-                  <input
-                    id="total-seats"
-                    type="number"
-                    min={0}
-                    placeholder="Please input seats"
-                    value={formValues.totalSeats}
-                    onChange={(event) => handleFormChange('totalSeats', event.target.value)}
-                    className="w-full rounded-md border border-[#D0D5DD] px-3 py-2 pr-10 text-sm text-[#101828] placeholder:text-[#C2C2C2] outline-none focus:border-[#1275D1]"
-                  />
-                  <UserIcon size={18} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#667085]" />
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-4 flex flex-col gap-2 sm:mt-6">
-              <label className="text-lg font-regular text-[#101828] sm:text-xl lg:text-[24px]" htmlFor="concert-description">
-                Description
-              </label>
-              <textarea
-                id="concert-description"
-                placeholder="Please input description"
-                value={formValues.description}
-                onChange={(event) => handleFormChange('description', event.target.value)}
-                rows={4}
-                className="w-full rounded-md border border-[#D0D5DD] px-3 py-2 text-sm text-[#101828] placeholder:text-[#C2C2C2] outline-none focus:border-[#1275D1]"
-              />
-            </div>
-
-            <div className="mt-6 flex justify-end">
-              <Button
-                type="submit"
-                text="Save"
-                icon={SaveIcon}
-                backgroundColor="#1692EC"
-                textColor="#FFFFFF"
-              />
-            </div>
-          </form>
+            isSubmitting={creatingConcert}
+          />
         )}
       </section>
     </main>
