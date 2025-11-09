@@ -78,15 +78,15 @@ export default function UserHistoryPage() {
                     </td>
                   </tr>
                 ) : (
-                  history.map((entry) => (
+                  history.map((entry, index) => (
                     <tr key={entry.id} className="text-xs text-[#101828] sm:text-sm">
-                      <td className="border-b border-r border-[#D0D5DD] px-2 py-2 sm:px-4 sm:py-3">
+                      <td className={`border-r border-[#D0D5DD] px-2 py-2 sm:px-4 sm:py-3 ${index < history.length - 1 ? 'border-b' : ''}`}>
                         {new Date(entry.occurredAt).toLocaleString()}
                       </td>
-                      <td className="border-b border-r border-[#D0D5DD] px-2 py-2 sm:px-4 sm:py-3">
+                      <td className={`border-r border-[#D0D5DD] px-2 py-2 sm:px-4 sm:py-3 ${index < history.length - 1 ? 'border-b' : ''}`}>
                         {entry.concert?.name ?? entry.concertId}
                       </td>
-                      <td className="border-b border-[#D0D5DD] px-2 py-2 text-[#1275D1] sm:px-4 sm:py-3">
+                      <td className={`border-[#D0D5DD] px-2 py-2 text-[#1275D1] sm:px-4 sm:py-3 ${index < history.length - 1 ? 'border-b' : ''}`}>
                         {entry.action === 'RESERVE' ? 'Reserve' : 'Cancel'}
                       </td>
                     </tr>

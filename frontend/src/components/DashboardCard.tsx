@@ -37,7 +37,7 @@ export function DashboardCard({
   return (
     <article
       style={{ backgroundColor: color, color: textColor }}
-      className={`flex w-full flex-col justify-center rounded-2xl p-4 shadow-sm sm:p-6 ${className ?? ''}`.trim()}
+      className={`flex w-full flex-col justify-center rounded-[8px] p-4 shadow-sm sm:p-6 ${className ?? ''}`.trim()}
     >
       <div className="flex flex-col items-center justify-center gap-3 text-center sm:gap-4">
         <div className="flex items-center justify-center">
