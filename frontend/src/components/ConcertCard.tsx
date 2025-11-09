@@ -40,7 +40,14 @@ export function ConcertCard({ name, description, totalSeats, onConfirmDelete }: 
           <UserIcon size={20} className="sm:h-6 sm:w-6" />
           <span className="text-sm font-medium sm:text-base">{totalSeats}</span>
         </div>
-        <Button text="Delete" variant="danger" icon={Trash2Icon} onClick={handleDelete} size="sm" className="sm:size-md" />
+        <Button
+          text="Delete"
+          variant="danger"
+          icon={Trash2Icon}
+          onClick={handleDelete}
+          size="sm"
+          className="self-end px-3 sm:self-auto sm:px-4"
+        />
       </div>
 
       <Modal
