@@ -29,18 +29,18 @@ export function ConcertCard({ name, description, totalSeats, onConfirmDelete }: 
   };
 
   return (
-    <div className="rounded-2xl border border-[#D0D5DD] bg-white p-6 shadow-sm">
-      <div className="border-b border-[#E4E7EC] pb-4">
-        <h3 className="text-2xl font-semibold text-[#1692EC]">{name}</h3>
+    <div className="rounded-2xl border border-[#D0D5DD] bg-white p-4 shadow-sm sm:p-6">
+      <div className="border-b border-[#E4E7EC] pb-3 sm:pb-4">
+        <h3 className="text-lg font-semibold text-[#1692EC] sm:text-xl lg:text-2xl">{name}</h3>
       </div>
-      <p className="mt-4 text-base leading-relaxed text-[#101828]">{description}</p>
+      <p className="mt-3 text-sm leading-relaxed text-[#101828] sm:mt-4 sm:text-base">{description}</p>
 
-      <div className="mt-6 flex items-center justify-between">
+      <div className="mt-4 flex flex-col gap-3 sm:mt-6 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-2 text-[#101828]">
-          <UserIcon size={24} />
-          <span className="text-base font-medium">{totalSeats}</span>
+          <UserIcon size={20} className="sm:h-6 sm:w-6" />
+          <span className="text-sm font-medium sm:text-base">{totalSeats}</span>
         </div>
-        <Button text="Delete" variant="danger" icon={Trash2Icon} onClick={handleDelete} />
+        <Button text="Delete" variant="danger" icon={Trash2Icon} onClick={handleDelete} size="sm" className="sm:size-md" />
       </div>
 
       <Modal
