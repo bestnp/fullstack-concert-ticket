@@ -4,6 +4,7 @@ let createConcert: typeof import('@/lib/api').createConcert;
 let reserveConcert: typeof import('@/lib/api').reserveConcert;
 let cancelReservation: typeof import('@/lib/api').cancelReservation;
 let ensureDemoUser: typeof import('@/lib/api').ensureDemoUser;
+let getUsers: typeof import('@/lib/api').getUsers;
 
 describe('api client', () => {
   beforeEach(async () => {
@@ -20,6 +21,7 @@ describe('api client', () => {
     reserveConcert = api.reserveConcert;
     cancelReservation = api.cancelReservation;
     ensureDemoUser = api.ensureDemoUser;
+    getUsers = api.getUsers;
   });
 
   afterEach(() => {

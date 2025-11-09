@@ -2206,11 +2206,11 @@ var _s = __turbopack_context__.k.signature();
 function ConcertCard(t0) {
     _s();
     const $ = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$compiler$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["c"])(27);
-    if ($[0] !== "bb7622cce5a0ce3e5d4ba074399d89ceee6b4c78f2090545e2bf8c4ffc4c3816") {
+    if ($[0] !== "1592f69694ce7a18bb455af2bf01f40f328813f5141577af45de6de1381401a2") {
         for(let $i = 0; $i < 27; $i += 1){
             $[$i] = Symbol.for("react.memo_cache_sentinel");
         }
-        $[0] = "bb7622cce5a0ce3e5d4ba074399d89ceee6b4c78f2090545e2bf8c4ffc4c3816";
+        $[0] = "1592f69694ce7a18bb455af2bf01f40f328813f5141577af45de6de1381401a2";
     }
     const { name, description, totalSeats, onConfirmDelete } = t0;
     const [modalOpen, setModalOpen] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
@@ -2336,7 +2336,7 @@ function ConcertCard(t0) {
             icon: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$icons$2f$Trash2Icon$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Trash2Icon"],
             onClick: handleDelete,
             size: "sm",
-            className: "px-3 sm:px-4"
+            className: "self-end px-3 sm:self-auto sm:px-4"
         }, void 0, false, {
             fileName: "[project]/src/components/ConcertCard.tsx",
             lineNumber: 99,

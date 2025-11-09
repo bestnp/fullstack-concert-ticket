@@ -683,10 +683,6 @@
     align-self: flex-end;
   }
 
-  .self-start {
-    align-self: flex-start;
-  }
-
   .overflow-x-auto {
     overflow-x: auto;
   }
