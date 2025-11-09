@@ -114,9 +114,9 @@ export default function UserPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 pl-[240px]">
+    <div className="min-h-screen bg-gray-50 pt-16 lg:pl-[240px] lg:pt-0">
       <Sidebar initialRole="user" />
-      <main className="flex min-h-screen flex-col gap-6 px-10 py-10">
+      <main className="flex min-h-screen flex-col gap-6 px-4 py-6 sm:px-6 sm:py-8 lg:px-10 lg:py-10">
         <Toast
           open={Boolean(toast)}
           message={toast?.message ?? ''}
@@ -124,13 +124,13 @@ export default function UserPage() {
           onClose={handleCloseToast}
         />
 
-        <section className="mx-auto flex w-full max-w-5xl flex-col gap-6">
+        <section className="mx-auto flex w-full max-w-5xl flex-col gap-4 sm:gap-6">
           {loadingConcerts ? (
-            <div className="rounded-2xl border border-[#D0D5DD] bg-white p-10 text-center text-[#667085]">
+            <div className="rounded-2xl border border-[#D0D5DD] bg-white p-6 text-center text-[#667085] sm:p-10">
               <p>Loading concerts...</p>
             </div>
           ) : concerts.length === 0 ? (
-            <div className="rounded-2xl border border-dashed border-[#D0D5DD] bg-white p-10 text-center text-[#667085]">
+            <div className="rounded-2xl border border-dashed border-[#D0D5DD] bg-white p-6 text-center text-[#667085] sm:p-10">
               <p>No concerts available.</p>
             </div>
           ) : (
@@ -139,19 +139,19 @@ export default function UserPage() {
               return (
                 <div
                   key={concert.id}
-                  className="rounded-2xl border border-[#D0D5DD] bg-white p-6 shadow-sm"
+                  className="rounded-2xl border border-[#D0D5DD] bg-white p-4 shadow-sm sm:p-6"
                 >
-                  <div className="border-b border-[#E4E7EC] pb-4">
-                    <h3 className="text-2xl font-semibold text-[#1275D1]">{concert.name}</h3>
+                  <div className="border-b border-[#E4E7EC] pb-3 sm:pb-4">
+                    <h3 className="text-lg font-semibold text-[#1275D1] sm:text-xl lg:text-2xl">{concert.name}</h3>
                   </div>
-                  <p className="mt-4 text-base leading-relaxed text-[#101828]">
+                  <p className="mt-3 text-sm leading-relaxed text-[#101828] sm:mt-4 sm:text-base">
                     {concert.description}
                   </p>
 
-                  <div className="mt-6 flex items-center justify-between">
+                  <div className="mt-4 flex flex-col gap-3 sm:mt-6 sm:flex-row sm:items-center sm:justify-between">
                     <div className="flex items-center gap-2 text-[#101828]">
-                      <UserIcon size={20} />
-                      <span className="text-base font-medium">
+                      <UserIcon size={18} className="sm:h-5 sm:w-5" />
+                      <span className="text-sm font-medium sm:text-base">
                         {concert.availableSeats.toLocaleString()} /{' '}
                         {concert.totalSeats.toLocaleString()} seats available
                       </span>
@@ -162,7 +162,8 @@ export default function UserPage() {
                         variant="danger"
                         onClick={() => handleCancel(concert.id)}
                         disabled={isProcessing}
-                        className={isProcessing ? 'cursor-wait opacity-75' : ''}
+                        size="sm"
+                        className={`w-full sm:w-auto ${isProcessing ? 'cursor-wait opacity-75' : ''}`}
                       />
                     ) : (
                       <Button
@@ -172,11 +173,12 @@ export default function UserPage() {
                         borderColor="#1692EC"
                         onClick={() => handleReserve(concert.id)}
                         disabled={concert.availableSeats <= 0 || isProcessing}
-                        className={
+                        size="sm"
+                        className={`w-full sm:w-auto ${
                           concert.availableSeats <= 0 || isProcessing
                             ? 'cursor-not-allowed opacity-60'
                             : ''
-                        }
+                        }`}
                       />
                     )}
                   </div>

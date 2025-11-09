@@ -36,17 +36,17 @@ export function DashboardCard({
 
   return (
     <article
-      style={{ width: dimensions.width, height: dimensions.height, backgroundColor: color, color: textColor }}
-      className={`flex flex-col justify-center rounded-2xl p-6 shadow-sm ${className ?? ''}`.trim()}
+      style={{ backgroundColor: color, color: textColor }}
+      className={`flex w-full flex-col justify-center rounded-2xl p-4 shadow-sm sm:p-6 ${className ?? ''}`.trim()}
     >
-      <div className="flex flex-col items-center justify-center gap-4 text-center">
+      <div className="flex flex-col items-center justify-center gap-3 text-center sm:gap-4">
         <div className="flex items-center justify-center">
-          <Icon size={40} color={textColor} />
+          <Icon size={32} color={textColor} className="sm:h-10 sm:w-10" />
         </div>
-        <span className="text-[24px] font-regular" style={{ color: textColor }}>
+        <span className="text-lg font-regular sm:text-[24px]" style={{ color: textColor }}>
           {text}
         </span>
-        <p className="text-[60px] font-regular" style={{ color: textColor }}>
+        <p className="text-[40px] font-regular sm:text-[60px]" style={{ color: textColor }}>
           {number}
         </p>
       </div>

@@ -163,7 +163,7 @@ export function Dashboard() {
   );
 
   return (
-    <main className="flex flex-1 flex-col gap-10 px-10 py-10">
+    <main className="flex flex-1 flex-col gap-6 px-4 py-6 sm:gap-8 sm:px-6 sm:py-8 lg:gap-10 lg:px-10 lg:py-10">
       <Toast
         open={Boolean(toast)}
         message={toast?.message ?? ''}
@@ -171,7 +171,7 @@ export function Dashboard() {
         onClose={handleCloseToast}
       />
 
-      <section className="mx-auto flex w-full max-w-5xl flex-wrap justify-center gap-6 md:flex-nowrap">
+      <section className="mx-auto grid w-full max-w-5xl grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
         <DashboardCard
           icon={UserIcon}
           text="Total of seats"
@@ -206,11 +206,11 @@ export function Dashboard() {
         {activeTab === 'overview' ? (
           <div className="flex flex-col gap-6">
             {loadingConcerts ? (
-              <div className="rounded-2xl border border-[#D0D5DD] bg-white p-10 text-center text-[#667085]">
+              <div className="rounded-2xl border border-[#D0D5DD] bg-white p-6 text-center text-[#667085] sm:p-10">
                 <p>Loading concerts...</p>
               </div>
             ) : concerts.length === 0 ? (
-              <div className="rounded-2xl border border-dashed border-[#D0D5DD] bg-white p-10 text-center text-[#667085]">
+              <div className="rounded-2xl border border-dashed border-[#D0D5DD] bg-white p-6 text-center text-[#667085] sm:p-10">
                 <p>No concerts available.</p>
               </div>
             ) : (
@@ -228,16 +228,18 @@ export function Dashboard() {
         ) : (
           <form
             onSubmit={handleCreateSubmit}
-            className="rounded-2xl border border-[#D0D5DD] bg-white p-10 shadow-sm"
+            className="rounded-2xl border border-[#D0D5DD] bg-white p-6 shadow-sm sm:p-10"
           >
             <div>
-              <h3 className="text-[40px] font-semibold text-[#1692EC]">Create</h3>
-              <div className="mt-2 h-[1px] w-[942px] rounded-full bg-[#C2C2C2]" aria-hidden />
+              <h3 className="text-2xl font-semibold text-[#1692EC] sm:text-[32px] lg:text-[40px]">
+                Create
+              </h3>
+              <div className="mt-2 h-[1px] w-full max-w-[942px] rounded-full bg-[#C2C2C2]" aria-hidden />
             </div>
 
-            <div className="mt-6 grid gap-6 md:grid-cols-2">
+            <div className="mt-6 grid gap-4 sm:gap-6 md:grid-cols-2">
               <div className="flex flex-col gap-2">
-                <label className="text-[24px] font-regular text-[#101828]" htmlFor="concert-name">
+                <label className="text-lg font-regular text-[#101828] sm:text-xl lg:text-[24px]" htmlFor="concert-name">
                   Concert Name
                 </label>
                 <input
@@ -250,7 +252,7 @@ export function Dashboard() {
                 />
               </div>
               <div className="flex flex-col gap-2">
-                <label className="text-[24px] font-regular text-[#101828]" htmlFor="total-seats">
+                <label className="text-lg font-regular text-[#101828] sm:text-xl lg:text-[24px]" htmlFor="total-seats">
                   Total of seat
                 </label>
                 <div className="relative">
@@ -268,8 +270,8 @@ export function Dashboard() {
               </div>
             </div>
 
-            <div className="mt-6 flex flex-col gap-2">
-              <label className="text-[24px] font-regular text-[#101828]" htmlFor="concert-description">
+            <div className="mt-4 flex flex-col gap-2 sm:mt-6">
+              <label className="text-lg font-regular text-[#101828] sm:text-xl lg:text-[24px]" htmlFor="concert-description">
                 Description
               </label>
               <textarea
