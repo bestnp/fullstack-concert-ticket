@@ -1,5 +1,4 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { ReservationStatus } from '@prisma/client';
 
 import { PrismaService } from '../prisma/prisma.service';
 import { CancelReservationDto } from './dto/cancel-reservation.dto';
@@ -26,7 +25,7 @@ export class ReservationsService {
       where: { userId_concertId: { userId, concertId } },
     });
 
-    if (existing?.status === ReservationStatus.RESERVED) {
+    if (existing?.status === 'RESERVED') {
       throw new BadRequestException('Concert already reserved by this user');
     }
 
@@ -50,7 +49,7 @@ export class ReservationsService {
           ? await tx.reservation.update({
               where: { id: existing.id },
               data: {
-                status: ReservationStatus.RESERVED,
+                status: 'RESERVED',
                 reservedAt: new Date(),
                 cancelledAt: null,
               },
@@ -89,7 +88,7 @@ export class ReservationsService {
       where: { userId_concertId: { userId, concertId } },
     });
 
-    if (!reservation || reservation.status !== ReservationStatus.RESERVED) {
+    if (!reservation || reservation.status !== 'RESERVED') {
       throw new BadRequestException('Active reservation not found for this user');
     }
 
@@ -111,7 +110,7 @@ export class ReservationsService {
       const updatedReservation = await tx.reservation.update({
         where: { id: reservation.id },
         data: {
-          status: ReservationStatus.CANCELLED,
+          status: 'CANCELLED',
           cancelledAt: new Date(),
         },
       });
